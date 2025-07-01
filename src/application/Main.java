@@ -1,19 +1,30 @@
 package application;
 
-import model.Expense;
 import model.ExpenseList;
+import service.JsonService;
 
 public class Main {
     public static void main(String[] args) {
 
-        ExpenseList expenses = new ExpenseList();
+        JsonService jsonService = new JsonService();
 
-        Expense expense1 = new Expense(1, "conta luz", 50.00);
-        Expense expense2 = new Expense(2, "conta agua", 40.00);
+        ExpenseList expenses = jsonService.loadExpenses();
 
-        expenses.addExpense(expense1);
-        expenses.addExpense(expense2);
+//        expenses.addExpense("Lunch", 20.00);
+//        expenses.addExpense("Dinner", 40.00);
+//        expenses.addExpense("TV", 30.00);
+//        expenses.addExpense("Movies", 15.00);
 
-        System.out.println(expenses);
+//        expenses.deleteExpense(3);
+
+//        expenses.updateExpense(2, "Games", 25.00);
+
+//        expenses.listAllExpenses();
+
+//        expenses.sumaryAllExpenses();
+
+//        expenses.sumaryMonthExpenses(7);
+
+        jsonService.saveExpenses(expenses);
     }
 }

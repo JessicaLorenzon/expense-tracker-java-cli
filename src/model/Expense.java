@@ -50,11 +50,6 @@ public class Expense {
 
     @Override
     public String toString() {
-        return "Expense{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", amount=" + amount +
-                ", date=" + date +
-                '}';
+        return String.format("%-3d %-11s %-15s $%.2f", id, date, description, amount);
     }
 }
