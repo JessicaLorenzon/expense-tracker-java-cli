@@ -1,5 +1,7 @@
 package model;
 
+import view.View;
+
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -11,67 +13,69 @@ public class ExpenseList {
     private final List<Expense> expenses = new ArrayList<>();
     private Integer nextId = 1;
 
+    View view = new View();
+
     public List<Expense> getExpenses() {
         return expenses;
     }
 
     public void addExpense(String description, Double amount) {
         if (description.isBlank() || amount.isNaN()) {
-            System.out.println("Invalid description or amount!");
+            view.displayInvalidParameter();
         } else {
             expenses.add(new Expense(nextId, description, amount));
-            System.out.println("Expense added successfully (ID: " + nextId + ")");
+            view.displayAddedSuccessfully(nextId);
             nextId++;
         }
     }
 
     public void deleteExpense(Integer id) {
-        Expense expense = searchById(id);
-        if (expense != null) {
-            expenses.remove(expense);
-            System.out.println("Expense with id " + id + " deleted successfully");
+        Expense expenseDeleted = searchById(id);
+        if (expenseDeleted != null) {
+            expenses.remove(expenseDeleted);
+            view.displayDeletedSuccessfully(id);
         }
     }
 
     public void updateExpense(Integer id, String description, Double amount) {
-        Expense expense = searchById(id);
-        if (expense != null) {
+        Expense expenseUpdated = searchById(id);
+        if (expenseUpdated != null) {
             if (description.isBlank() || amount.isNaN()) {
-                System.out.println("Invalid description or amount!");
+                view.displayInvalidParameter();
             } else {
-                expense.setDescription(description);
-                expense.setAmount(amount);
-                System.out.println("Expense with id " + id + " updated successfully");
+                expenseUpdated.setDescription(description);
+                expenseUpdated.setAmount(amount);
+                view.displayUpdatedSuccessfully(id);
             }
         }
     }
 
     public void listAllExpenses() {
-        System.out.println("ID  Date        Description     Amount");
+        view.displayHeaderExpenses();
         for (Expense expense : expenses) {
-            System.out.println(expense);
+            System.out.println(view.displayExpense(expense));
         }
     }
 
     public void sumaryAllExpenses() {
-        Double total = 0.0;
+        Double totalAll = 0.0;
         for (Expense expense : expenses) {
-            total += expense.getAmount();
+            totalAll += expense.getAmount();
         }
-        System.out.println("Total expenses: $" + total);
+        view.displayTotalAll(totalAll);
     }
 
     public void sumaryMonthExpenses(Integer month) {
-        Double total = 0.0;
+        Double totalMonth = 0.0;
         if (month < 1 || month > 12) {
-            System.out.println("Invalid month!");
+            view.displayInvalidMonth();
         } else {
             for (Expense expense : expenses) {
                 if (month.equals(expense.getDate().getMonthValue())) {
-                    total += expense.getAmount();
+                    totalMonth += expense.getAmount();
                 }
             }
-            System.out.println("Total expenses for " + monthConverter(month) + ": $" + total);
+            view.displayTotalMonth(monthConverter(month), totalMonth);
         }
     }
 
@@ -81,7 +85,7 @@ public class ExpenseList {
                 return expense;
             }
         }
-        System.out.println("Expense with id " + id + " not found");
+        view.displayInvalidId(id);
         return null;
     }
 

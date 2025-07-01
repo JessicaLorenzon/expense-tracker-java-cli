@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import model.ExpenseList;
+import view.View;
 
 import java.io.File;
 import java.io.FileReader;
@@ -18,6 +19,8 @@ public class JsonService {
 
     public static String filePath = new File("expenses.json").getAbsolutePath();
 
+    View view = new View();
+
     Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateSerializer()).create();
 
     public void saveExpenses(ExpenseList expenseList) {
@@ -26,7 +29,7 @@ public class JsonService {
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(json);
         } catch (IOException e) {
-            System.err.println("Error saving expenses: " + e.getMessage());
+            view.displaySavingError(e);
         }
     }
 
@@ -39,7 +42,7 @@ public class JsonService {
                 return gson.fromJson(reader, tipagem);
 
             } catch (IOException e) {
-                System.err.println("Error loading expenses: " + e.getMessage());
+                view.displayLoadingError(e);
                 return null;
             }
         }

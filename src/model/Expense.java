@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Expense {
 
-    private Integer id;
+    private final Integer id;
     private String description;
     private Double amount;
     private LocalDate date;
@@ -18,10 +18,6 @@ public class Expense {
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getDescription() {
@@ -48,8 +44,4 @@ public class Expense {
         this.date = date;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%-3d %-11s %-15s $%.2f", id, date, description, amount);
-    }
 }

@@ -10,10 +10,10 @@ public class Main {
 
         ExpenseList expenses = jsonService.loadExpenses();
 
-//        expenses.addExpense("Lunch", 20.00);
-//        expenses.addExpense("Dinner", 40.00);
-//        expenses.addExpense("TV", 30.00);
-//        expenses.addExpense("Movies", 15.00);
+        expenses.addExpense("Lunch", 20.00);
+        expenses.addExpense("Dinner", 40.00);
+        expenses.addExpense("TV", 30.00);
+        expenses.addExpense("Movies", 15.00);
 
 //        expenses.deleteExpense(3);
 
