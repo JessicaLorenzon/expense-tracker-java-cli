@@ -2,31 +2,40 @@ package model;
 
 import view.View;
 
-import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class ExpenseList {
 
     private final List<Expense> expenses = new ArrayList<>();
     private Integer nextId = 1;
 
-    View view = new View();
+    private final View view = new View();
 
     public List<Expense> getExpenses() {
         return expenses;
     }
 
-    public void addExpense(String description, Double amount) {
-        if (description.isBlank() || amount.isNaN()) {
-            view.displayInvalidParameter();
-        } else {
-            expenses.add(new Expense(nextId, description, amount));
-            view.displayAddedSuccessfully(nextId);
-            nextId++;
+    public void loadExistingExpenses(List<Expense> loadedExpenses) {
+        expenses.addAll(loadedExpenses);
+
+        int maxId = 0;
+        for (Expense expense : loadedExpenses) {
+            if (expense.getId() > maxId) {
+                maxId = expense.getId();
+            }
         }
+        nextId = maxId + 1;
+    }
+
+    public void addExpense(String description, Double amount) {
+        if (invalidExpense(description, amount)) {
+            view.displayInvalidParameter();
+            return;
+        }
+        expenses.add(new Expense(nextId, description, amount));
+        view.displayAddedSuccessfully(nextId);
+        nextId++;
     }
 
     public void deleteExpense(Integer id) {
@@ -39,25 +48,25 @@ public class ExpenseList {
 
     public void updateExpense(Integer id, String description, Double amount) {
         Expense expenseUpdated = searchById(id);
-        if (expenseUpdated != null) {
-            if (description.isBlank() || amount.isNaN()) {
-                view.displayInvalidParameter();
-            } else {
-                expenseUpdated.setDescription(description);
-                expenseUpdated.setAmount(amount);
-                view.displayUpdatedSuccessfully(id);
-            }
+        if (expenseUpdated == null) return;
+
+        if (invalidExpense(description, amount)) {
+            view.displayInvalidParameter();
+            return;
         }
+        expenseUpdated.setDescription(description);
+        expenseUpdated.setAmount(amount);
+        view.displayUpdatedSuccessfully(id);
     }
 
     public void listAllExpenses() {
         view.displayHeaderExpenses();
         for (Expense expense : expenses) {
-            System.out.println(view.displayExpense(expense));
+            view.displayExpense(expense);
         }
     }
 
-    public void sumaryAllExpenses() {
+    public void summaryAllExpenses() {
         Double totalAll = 0.0;
         for (Expense expense : expenses) {
             totalAll += expense.getAmount();
@@ -65,23 +74,24 @@ public class ExpenseList {
         view.displayTotalAll(totalAll);
     }
 
-    public void sumaryMonthExpenses(Integer month) {
+    public void summaryMonthExpenses(Integer month) {
         Double totalMonth = 0.0;
         if (month < 1 || month > 12) {
             view.displayInvalidMonth();
-        } else {
-            for (Expense expense : expenses) {
-                if (month.equals(expense.getDate().getMonthValue())) {
-                    totalMonth += expense.getAmount();
-                }
-            }
-            view.displayTotalMonth(monthConverter(month), totalMonth);
+            return;
         }
+        for (Expense expense : expenses) {
+            if (expense.getDate().getMonthValue() == month) {
+                totalMonth += expense.getAmount();
+            }
+        }
+        String monthName = view.formatMonth(month);
+        view.displayTotalMonth(monthName, totalMonth);
     }
 
     private Expense searchById(Integer id) {
         for (Expense expense : expenses) {
-            if (id.equals(expense.getId())) {
+            if (expense.getId().equals(id)) {
                 return expense;
             }
         }
@@ -89,8 +99,7 @@ public class ExpenseList {
         return null;
     }
 
-    private String monthConverter(Integer month) {
-        Month monthEnum = Month.of(month);
-        return monthEnum.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+    private boolean invalidExpense(String description, Double amount) {
+        return description == null || description.isBlank() || amount == null || amount.isNaN();
     }
 }

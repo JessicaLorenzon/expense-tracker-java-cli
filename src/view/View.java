@@ -3,6 +3,9 @@ package view;
 import model.Expense;
 
 import java.io.IOException;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class View {
 
@@ -10,8 +13,12 @@ public class View {
         System.out.println("ID  Date        Description     Amount");
     }
 
-    public String displayExpense(Expense expense) {
-        return String.format("%-3d %-11s %-15s $%.2f", expense.getId(), expense.getDate(), expense.getDescription(), expense.getAmount());
+    public void displayExpense(Expense expense) {
+        System.out.printf("%-3d %-11s %-15s $%.2f%n",
+                expense.getId(),
+                expense.getDate(),
+                expense.getDescription(),
+                expense.getAmount());
     }
 
     public void displayAddedSuccessfully(Integer id) {
@@ -47,7 +54,7 @@ public class View {
     }
 
     public void displayInvalidArgs() {
-        System.out.println("No arguments received! Try again");
+        System.out.println("Invalid argument! Try again");
     }
 
     public void displaySavingError(IOException e) {
@@ -56,5 +63,10 @@ public class View {
 
     public void displayLoadingError(IOException e) {
         System.err.println("Error loading expenses: " + e.getMessage());
+    }
+
+    public String formatMonth(Integer month) {
+        Month monthEnum = Month.of(month);
+        return monthEnum.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
 }
